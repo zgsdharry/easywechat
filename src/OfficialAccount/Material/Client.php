@@ -106,6 +106,33 @@ class Client extends BaseClient
      * @throws \EasyWeChat\Kernel\Exceptions\InvalidConfigException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
+    public function addDraft($articles)
+    {
+        if ($articles instanceof Article || !empty($articles['title'])) {
+            $articles = [$articles];
+        }
+
+        $params = ['articles' => array_map(function ($article) {
+            if ($article instanceof Article) {
+                return $article->transformForJsonRequestWithoutType();
+            }
+
+            return $article;
+        }, $articles)];
+
+        return $this->httpPostJson('cgi-bin/draft/add', $params);
+    }
+
+    /**
+     * Upload articles.
+     *
+     * @param array|Article $articles
+     *
+     * @return \Psr\Http\Message\ResponseInterface|\EasyWeChat\Kernel\Support\Collection|array|object|string
+     *
+     * @throws \EasyWeChat\Kernel\Exceptions\InvalidConfigException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function uploadArticle($articles)
     {
         if ($articles instanceof Article || !empty($articles['title'])) {
